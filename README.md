@@ -19,17 +19,11 @@ To compile the LLVM pass, navigate to the root directory of the project. To comp
 
     make
 
-Then, a simple run of
+to generate compilation files in the `build` directory. Then, a simple run of
 
-    ninja
+    ninja -C build
   
-in the root directory will generate the pass in the `lib` directory. One can then run the pass on various files using the following syntax (assuming access from the root of the project):
-
-    opt -load lib/PASS.so -FLAG < PATH_TO_SRC_FILE
-  
-To generate a bitcode (`.bc`) file, one can use `clang` or `clang++`:
-
-    clang++ -std=c++11 -emit-llvm -c SRC_FILE.cpp
+in the root directory will compile the files. <location TBD>
 
 ### Sources
 

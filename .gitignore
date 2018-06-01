@@ -17,6 +17,11 @@ Testing
 *.a
 *.lib
 
+# Compiled dynamic libraries
+*.so
+*.dll
+*.dylib
+
 # Compiled assembly and IR files
 *.s
 *.asm
