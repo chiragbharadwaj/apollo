@@ -1,0 +1,34 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Generated compiler files
+CMakeCache.txt
+CMakeScripts
+CMakeFiles
+Testing
+*.cmake
+*.ninja*
+
+# Prerequisites and dependencies
+*.d
+
+# Compiled static libraries
+*.a
+*.lib
+
+# Compiled assembly and IR files
+*.s
+*.asm
+*.bc
+*.bitcode
+*.ll
+
+# Compiled object files
+*.o
+*.obj
+
+# Generated data files
+*.png
+*.dot
+*.out
