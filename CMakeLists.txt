@@ -19,7 +19,7 @@ include_directories(${LLVM_INCLUDE_DIRS})
 link_directories(${LLVM_LIBRARY_DIRS})
 
 # Also add the link-time libraries to resolve all the symbol dependencies.
-link_directories(lib)
+link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 # Recursively add the source files into the entire project.
-add_subdirectory(src)
+add_subdirectory(${CMAKE_SOURCE_DIR}/src)
