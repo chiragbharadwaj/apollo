@@ -9,6 +9,9 @@
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/Casting.h"
 
+// Pulling in the node type discriminator for LLVM-style class hierarchies.
+#include "graphs/NodeInfo.h"
+
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
 
@@ -20,17 +23,26 @@ namespace apollo {
 class Node {
 public:
   /* Constructor for the default node type.
+   *     [nk]: The dynamic type of the node class in the class hierarchy.
    *     [v]: The LLVM Value around which to wrap this node.
    *
    * Default: Increments the internal number of alive nodes for the next node
    *          and saves the name of the Value.
    */
-  Node(const Value *v) : val(v) {
+  Node(const NodeKind nk, const Value *v) : kind(nk), val(v) {
     id++;
     raw_string_ostream stream(name);
     v->print(stream);
     name = stream.str();
   }
+
+  /* Overloaded constructor for the default node type.
+   *     [v]: The LLVM Value around which to wrap this node.
+   *
+   * Default: Increments the internal number of alive nodes for the next node
+   *          and saves the name of the Value.
+   */
+  Node(const Value *v) : Node(Kind_Base, v) { }
 
   /* Destructor for the default node type.
    *
@@ -41,11 +53,17 @@ public:
     id--;
   }
 
-  /* Returns the internal ID corresponding to this node at creation-time.
+  /* [getID] returns the internal ID corresponding to this node at creation-time.
    *
    * Non-overridable.
    */
   int getID();
+
+  /* [getKind] returns the dynamic type of this node class in the class hierarchy.
+   *
+   * Non-overridable.
+   */
+  const NodeKind getKind() const;
 
   /* [getValue] returns a pointer to the LLVM Value around which this node wraps.
    *
@@ -66,7 +84,15 @@ public:
    */
   virtual const BasicBlock* getBasicBlock();
 
+  /* [classof] returns true if [n] is of this class' type. Returns false otherwise.
+   *   For LLVM-style RTTI support in the local type hierarchy.
+   */
+  static bool classof(const Node *n);
+
 private:
+  // The dynamic type of this node, which may not be the same as the base type.
+  const NodeKind kind;
+
   // A name corresponding to this node.
   std::string name;
 

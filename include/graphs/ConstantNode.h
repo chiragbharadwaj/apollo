@@ -8,6 +8,9 @@
 // Pull in the base node type.
 #include "graphs/Node.h"
 
+// Pulling in the node type discriminator for LLVM-style class hierarchies.
+#include "graphs/NodeInfo.h"
+
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
 
@@ -22,7 +25,7 @@ public:
    *
    * Override: Maintain behavior of the base node class.
    */
-  ConstantNode(const Constant *cnst) : Node(cnst) { }
+  ConstantNode(const Constant *cnst) : Node(Kind_Constant, cnst) { }
 
   /* Destructor for the Constant-based node type.
    *

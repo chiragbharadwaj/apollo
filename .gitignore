@@ -2,11 +2,16 @@
 .DS_Store
 Thumbs.db
 
+# Generated directories
+build/
+lib/
+bin/
+
 # Generated compiler files
 CMakeCache.txt
-CMakeScripts
-CMakeFiles
-Testing
+CMakeScripts/
+CMakeFiles/
+Testing/
 *.cmake
 *.ninja*
 
@@ -24,9 +29,7 @@ Testing
 
 # Compiled assembly and IR files
 *.s
-*.asm
 *.bc
-*.bitcode
 *.ll
 
 # Compiled object files

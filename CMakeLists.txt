@@ -7,6 +7,11 @@ if (APPLE)
   set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
 endif (APPLE)
 
+# Set the compiler to emit libraries and binaries to the appropriate directories.
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
+
 # Name of the root directory.
 project(apollo)
 

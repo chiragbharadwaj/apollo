@@ -8,6 +8,9 @@
 // Pull in the base node type.
 #include "graphs/Node.h"
 
+// Pulling in the node type discriminator for LLVM-style class hierarchies.
+#include "graphs/NodeInfo.h"
+
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
 
@@ -22,7 +25,7 @@ public:
    *
    * Override: Maintain behavior of the base node class.
    */
-  ArgumentNode(const Argument *arg) : Node(arg) { }
+  ArgumentNode(const Argument *arg) : Node(Kind_Argument, arg) { }
 
   /* Destructor for the Argument-based node type.
    *

@@ -10,6 +10,11 @@ int Node::getID() {
 }
 
 // See header file.
+const NodeKind Node::getKind() const {
+  return kind;
+}
+
+// See header file.
 const Value* Node::getValue() {
   return val;
 }
@@ -22,4 +27,10 @@ std::string Node::getName() {
 // See header file.
 const BasicBlock* Node::getBasicBlock() {
   return nullptr;
+}
+
+// See header file.
+bool Node::classof(const Node *n) {
+  return (n->getKind() >= Kind_Base) &&
+         (n->getKind() <= Kind_Argument);
 }
