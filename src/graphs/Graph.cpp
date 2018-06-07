@@ -1,5 +1,5 @@
 // Pull in the function prototypes.
-#include "graph/Graph.h"
+#include "graphs/Graph.h"
 
 // Shared namespace within the project.
 using namespace apollo;

@@ -5,8 +5,7 @@ include_directories(${CMAKE_SOURCE_DIR}/include)
 file(GLOB_RECURSE HEADERS ${CMAKE_SOURCE_DIR}/include *.h)
 
 # Recursively add the subdirectories' CMake files as well.
-add_subdirectory(graph)
+add_subdirectory(graphs)
 add_subdirectory(passes)
-add_subdirectory(profile)
+add_subdirectory(profiling)
 add_subdirectory(sim)
-add_subdirectory(visitors)
