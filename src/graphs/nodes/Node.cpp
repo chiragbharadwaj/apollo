@@ -5,6 +5,9 @@
 using namespace apollo;
 
 // See header file.
+int Node::id = 0;
+
+// See header file.
 int Node::getID() {
   return id;
 }

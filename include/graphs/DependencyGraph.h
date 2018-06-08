@@ -12,7 +12,7 @@
 // Pull in the base node type.
 #include "graphs/nodes/Node.h"
 
-// Pulling in the edge type discriminator for fine-grained classification.
+// Pull in the edge type discriminator for fine-grained classification.
 #include "graphs/edges/EdgeInfo.h"
 
 // Shared namespace within the project.
@@ -23,6 +23,10 @@ namespace apollo {
 // versions of the adjacency list by edge type so that classification is simpler.
 class DependencyGraph : public Graph<Node> {
 public:
+  // Rename the complex types so that they are simpler to read.
+  typedef typename std::map<Node*, std::set<Node*>> EdgeMap;
+  typedef typename std::map<Node*, std::map<Node*,int>> WeightedEdgeMap;
+
   /* Override: Also clears ALL of the various internal edge lists.
    */
   virtual void clear() override;
@@ -37,18 +41,45 @@ public:
    *           given by the specified distance, but only if the edge kind is the
    *           loop-carry dependence kind. This last parameter is optional.
    */
-  virtual void addEdge(Node *u, Node *v, EdgeKind ek, int dist = -1);
+  void addEdge(Node *u, Node *v, EdgeKind ek, int dist = -1);
 
   /* Override: Also removes the edge between the two nodes from ALL of the various
    *           internal edge lists.
    */
   virtual void removeEdge(Node *u, Node *v) override;
 
-private:
-  // Rename the complex types so that they are simpler to read.
-  typedef typename std::map<Node*, std::set<Node*>> EdgeMap;
-  typedef typename std::map<Node*, std::map<Node*,int>> WeightedEdgeMap;
+  /* [getControlEdges] returns the control-flow edges in this graph.
+   */
+  const EdgeMap getControlEdges();
 
+  /* [getDataEdges] returns the data-dependence edges in this graph.
+   */
+  const EdgeMap getDataEdges();
+
+  /* [getMemoryEdges] returns the certain memory-dependence edges in this graph.
+   */
+  const EdgeMap getMemoryEdges();
+
+  /* [getMemoryMaybeEdges] returns the unknown memory-dependence edges in this
+   *   graph.
+   */
+  const EdgeMap getMemoryMaybeEdges();
+
+  /* [getPhiDataEdges] returns the phi-node data-dependence edges in this graph.
+   */
+  const EdgeMap getPhiDataEdges();
+
+  /* [getLoopCarryEdges] returns the certain loop-carry memory-dependence edges
+   *   in this graph.
+   */
+  const WeightedEdgeMap getLoopCarryEdges();
+
+  /* [getLoopCarryMaybeEdges] returns the certain loop-carry memory-dependence
+   *   edges in this graph.
+   */
+  const WeightedEdgeMap getLoopCarryMaybeEdges();
+
+private:
   /* [eraseConnections] removes all connections from and to [v] in the map [em].
    *   All edges are removed and then [v] itself is removed at the end.
    *     [v]: A node to sever all ties with.

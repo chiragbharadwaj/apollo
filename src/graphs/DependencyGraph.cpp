@@ -105,3 +105,38 @@ void DependencyGraph::removeEdge(Node *u, Node *v) {
   loopCarryEdges     .at(u).erase(v);
   loopCarryMaybeEdges.at(u).erase(v);
 }
+
+// See header file.
+const DependencyGraph::EdgeMap DependencyGraph::getControlEdges() {
+  return controlEdges;
+}
+
+// See header file.
+const DependencyGraph::EdgeMap DependencyGraph::getDataEdges() {
+  return dataEdges;
+}
+
+// See header file.
+const DependencyGraph::EdgeMap DependencyGraph::getMemoryEdges() {
+  return memoryEdges;
+}
+
+// See header file.
+const DependencyGraph::EdgeMap DependencyGraph::getMemoryMaybeEdges() {
+  return memoryMaybeEdges;
+}
+
+// See header file.
+const DependencyGraph::EdgeMap DependencyGraph::getPhiDataEdges() {
+  return phiDataEdges;
+}
+
+// See header file.
+const DependencyGraph::WeightedEdgeMap DependencyGraph::getLoopCarryEdges() {
+  return loopCarryEdges;
+}
+
+// See header file.
+const DependencyGraph::WeightedEdgeMap DependencyGraph::getLoopCarryMaybeEdges() {
+  return loopCarryMaybeEdges;
+}

@@ -2,7 +2,7 @@
 #define APOLLO_GRAPHS_NODES_NODE
 
 // Pull in assertions to guarantee run-time safety for invariants.
-#include <assert.h>
+#include <cassert>
 
 // Pulling in various LLVM classes for prototype signatures.
 #include "llvm/IR/Value.h"
@@ -102,9 +102,6 @@ private:
   // An ID corresponding to the number of alive nodes at creation-time.
   static int id;
 };
-
-// Provide a simple initialization for the internal counter.
-int Node::id = 0;
 
 }
 
