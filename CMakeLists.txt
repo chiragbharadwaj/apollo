@@ -1,11 +1,16 @@
 # Not a very backwards-compatible requirement, but neither are LLVM releases.
 cmake_minimum_required(VERSION 3.11.1)
 
-# Set the compiler to be clang-based as opposed to gcc-based on macOS.
+# Set the compiler to be clang-based as opposed to gcc-based on *NIX systems.
 if (APPLE)
   set(CMAKE_C_COMPILER "/usr/local/opt/llvm/bin/clang")
   set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
 endif (APPLE)
+
+if (UNIX)
+  set(CMAKE_C_COMPILER "/usr/bin/clang")
+  set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
+endif (UNIX)
 
 # Set the compiler to emit libraries and binaries to the appropriate directories.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
