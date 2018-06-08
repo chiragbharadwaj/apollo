@@ -4,87 +4,93 @@
 // Shared namespace within the project.
 using namespace apollo;
 
-// See header file for comments.
-template <typename T>
-bool Graph<T>::isEmpty() {
-  return nodes.empty();
+// See header file.
+template <typename V>
+bool Graph<V>::isEmpty() {
+  return adjList.empty();
 }
 
-// See header file for comments.
-template <typename T>
-void Graph<T>::clear() {
-  nodes.clear();
+// See header file.
+template <typename V>
+void Graph<V>::clear() {
+  adjList.clear();
 }
 
-// See header file for comments.
-template <typename T>
-int Graph<T>::deg(T *v) {
-  return nodes.at(v).size();
+// See header file.
+template <typename V>
+int Graph<V>::size() {
+  return adjList.size();
 }
 
-// See header file for comments.
-template <typename T>
-bool Graph<T>::isAdj(T *u, T *v) {
-  return (nodes[u].find(v) != nodes[v].end());
+// See header file.
+template <typename V>
+int Graph<V>::deg(V *v) {
+  return adjList.at(v).size();
 }
 
-// See header file for comments.
-template <typename T>
-const std::set<T*> Graph<T>::adj(T *v) {
-  return nodes.at(v);
+// See header file.
+template <typename V>
+bool Graph<V>::isAdj(V *u, V *v) {
+  return (adjList[u].find(v) != adjList[v].end());
 }
 
-// See header file for comments.
-template <typename T>
-void Graph<T>::addNode(T *v) {
-  nodes[v];
+// See header file.
+template <typename V>
+const std::set<V*> Graph<V>::adjs(V *v) {
+  return adjList.at(v);
 }
 
-// See header file for comments.
-template <typename T>
-void Graph<T>::removeNode(T *v) {
+// See header file.
+template <typename V>
+void Graph<V>::addNode(V *v) {
+  adjList[v];
+}
+
+// See header file.
+template <typename V>
+void Graph<V>::removeNode(V *v) {
   // Loop through and remove all edge connections to this node.
-  for (const auto &entry : nodes) {
+  for (const auto &entry : adjList) {
     auto node = entry.first;
     auto adjs = entry.second;
     adjs.erase(v);
   }
   // Finally, remove this node itself.
-  nodes.erase(v);
+  adjList.erase(v);
 }
 
-// See header file for comments.
-template <typename T>
-void Graph<T>::addEdge(T *u, T *v) {
-  nodes[u].insert(v);
+// See header file.
+template <typename V>
+void Graph<V>::addEdge(V *u, V *v) {
+  adjList[u].insert(v);
 }
 
-// See header file for comments.
-template <typename T>
-void Graph<T>::removeEdge(T *u, T *v) {
-  nodes.at(u).erase(v);
+// See header file.
+template <typename V>
+void Graph<V>::removeEdge(V *u, V *v) {
+  adjList.at(u).erase(v);
 }
 
-// See header file for comments.
-template <typename T>
-typename Graph<T>::iterator Graph<T>::begin() {
-  return nodes.begin();
+// See header file.
+template <typename V>
+typename Graph<V>::iterator Graph<V>::begin() {
+  return adjList.begin();
 }
 
-// See header file for comments.
-template <typename T>
-typename Graph<T>::iterator Graph<T>::end() {
-  return nodes.end();
+// See header file.
+template <typename V>
+typename Graph<V>::iterator Graph<V>::end() {
+  return adjList.end();
 }
 
-// See header file for comments.
-template <typename T>
-typename Graph<T>::const_iterator Graph<T>::cbegin() {
-  return nodes.cbegin();
+// See header file.
+template <typename V>
+typename Graph<V>::const_iterator Graph<V>::cbegin() {
+  return adjList.cbegin();
 }
 
-// See header file for comments.
-template <typename T>
-typename Graph<T>::const_iterator Graph<T>::cend() {
-  return nodes.cend();
+// See header file.
+template <typename V>
+typename Graph<V>::const_iterator Graph<V>::cend() {
+  return adjList.cend();
 }

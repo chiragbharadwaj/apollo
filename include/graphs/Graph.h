@@ -8,32 +8,43 @@
 // Shared namespace within the project.
 namespace apollo {
 
-// Base class for all graphs, parameterized on a node type.
-template <typename T>
+// Base class for all graphs, parameterized on a node/vertex type.
+template <typename V>
 class Graph {
 public:
   // Iterator on the actual nodes themselves.
-  typedef typename std::map<T*, std::set<T*>>::iterator
+  typedef typename std::map<V*, std::set<V*>>::iterator
     iterator;
   // Constant version of the iterator on actual nodes themselves.
-  typedef typename std::map<T*, std::set<T*>>::const_iterator
+  typedef typename std::map<V*, std::set<V*>>::const_iterator
     const_iterator;
 
   /* [isEmpty] returns true if the graph is empty (i.e. it returns whether the
    *   graph contains no nodes).
+   *
+   * Default: As above.
    */
-  bool isEmpty();
+  virtual bool isEmpty();
 
   /* [clear] clears the graph so that it contains no nodes or edges.
+   *
+   * Default: As above.
    */
-  void clear();
+  virtual void clear();
+
+  /* [size] returns the number of nodes in the graph.
+   *
+   * Default: As above.
+   */
+  virtual int size();
 
   /* [deg] returns the (out-)degree of the node [v] in the graph.
    *     [v]: The node whose degree is to be determined.
    *
    * Requires: [v] is present in the graph.
+   * Default: As above.
    */
-  int deg(T *v);
+  virtual int deg(V *v);
 
   /* [isAdj] returns true if and only if [v] is adjacent to [u] in the graph,
    *   i.e. it returns whether [v] is in the adjacency list of [u].
@@ -41,31 +52,35 @@ public:
    *     [v]: The node source to test.
    *
    * Requires: [u] and [v] are present in the graph.
+   * Default: As above.
    */
-  bool isAdj(T *u, T *v);
+  virtual bool isAdj(V *u, V *v);
 
-  /* [adj] returns the list of nodes that are adjacent to [v] in the graph, i.e.
+  /* [adjs] returns the list of nodes that are adjacent to [v] in the graph, i.e.
    *   it returns the adjacency list of [v].
    *     [v]: The node whose adjacency list is to be determined.
    *
    * Requires: [v] is present in the graph.
+   * Default: As above.
    */
-  const std::set<T*> adj(T *v);
+  virtual const std::set<V*> adjs(V *v);
 
   /* [addNode] adds the node [v] to the graph. It is initially not adjacent
    *   to any other node, i.e. its adjacency list is empty.
    *     [v]: The node to add.
    *
    * Requires: [v] is not already present in the graph.
+   * Default: As above.
    */
-  void addNode(T *v);
+  virtual void addNode(V *v);
 
   /* [removeNode] deletes the node [v] from the graph.
    *     [v]: The node to remove.
    *
    * Requires: [v] is present in the graph.
+   * Default: As above.
    */
-  void removeNode(T *v);
+  virtual void removeNode(V *v);
 
   /* [addEdge] adds a directed edge from [u] to [v] in the graph. Thus, [v] is
    *   added to the end of the adjacency list of [u]. Parallel edges are not
@@ -74,8 +89,9 @@ public:
    *     [v]: The ending node of the directed edge.
    *
    * Requires: [u] and [v] are present in the graph.
+   * Default: As above.
    */
-  void addEdge(T *u, T *v);
+  virtual void addEdge(V *u, V *v);
 
   /* [removeEdge] deletes the directed edge from [u] to [v] in the graph. Thus,
    *   [v] is removed from the adjacency list of [u].
@@ -83,32 +99,41 @@ public:
    *     [v]: The ending node of the directed edge to remove.
    *
    * Requires: [v] is in the adjacency list of [u] in the graph.
+   * Default: As above.
    */
-  void removeEdge(T *u, T *v);
+  virtual void removeEdge(V *u, V *v);
 
   /* [begin] returns the starting position for looping over this graph with a
    *   simple iterator. Useful for range-based for loops in C++14.
+   *
+   * Non-overridable.
    */
   iterator begin();
 
   /* [end] returns the ending position for looping over this graph with a
    *   simple iterator. Useful for range-based for loops in C++14.
+   *
+   * Non-overridable.
    */
   iterator end();
 
   /* [begin] returns the starting position for looping over this graph with a
    *   constant iterator. Useful for range-based for loops in C++14.
+   *
+   * Non-overridable.
    */
   const_iterator cbegin();
 
   /* [end] returns the ending position for looping over this graph with a
    *   constant iterator. Useful for range-based for loops in C++14.
+   *
+   * Non-overridable.
    */
   const_iterator cend();
 
 private:
   // Actual graph structure, represented as an adjacency list (set) of nodes.
-  std::map<T*, std::set<T*>> nodes;
+  std::map<V*, std::set<V*>> adjList;
 };
 
 }

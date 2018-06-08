@@ -1,5 +1,5 @@
-#ifndef APOLLO_GRAPHS_NODE
-#define APOLLO_GRAPHS_NODE
+#ifndef APOLLO_GRAPHS_NODES_NODE
+#define APOLLO_GRAPHS_NODES_NODE
 
 // Pull in assertions to guarantee run-time safety for invariants.
 #include <assert.h>
@@ -10,7 +10,7 @@
 #include "llvm/Support/Casting.h"
 
 // Pulling in the node type discriminator for LLVM-style class hierarchies.
-#include "graphs/NodeInfo.h"
+#include "graphs/nodes/NodeInfo.h"
 
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
@@ -42,7 +42,7 @@ public:
    * Default: Increments the internal number of alive nodes for the next node
    *          and saves the name of the Value.
    */
-  Node(const Value *v) : Node(Kind_Base, v) { }
+  Node(const Value *v) : Node(Node_Base, v) { }
 
   /* Destructor for the default node type.
    *

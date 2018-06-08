@@ -1,15 +1,12 @@
-#ifndef APOLLO_GRAPHS_BASICBLOCKNODE
-#define APOLLO_GRAPHS_BASICBLOCKNODE
+#ifndef APOLLO_GRAPHS_NODES_BASICBLOCKNODE
+#define APOLLO_GRAPHS_NODES_BASICBLOCKNODE
 
 // Pulling in various LLVM classes for prototype signatures.
 #include "llvm/IR/BasicBlock.h"
 #include "llvm/Support/Casting.h"
 
 // Pull in the base node type.
-#include "graphs/Node.h"
-
-// Pulling in the node type discriminator for LLVM-style class hierarchies.
-#include "graphs/NodeInfo.h"
+#include "graphs/nodes/Node.h"
 
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
@@ -20,31 +17,21 @@ namespace apollo {
 // Wrapper around LLVM BasicBlock types.
 class BasicBlockNode : public Node {
 public:
-  /* Constructor for the BasicBlock-based node type.
-   *     [bb]: The LLVM BasicBlock around which to wrap this node.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
-  BasicBlockNode(const BasicBlock *bb) : Node(Kind_BasicBlock, bb) {
+  BasicBlockNode(const BasicBlock *bb) : Node(Node_BasicBlock, bb) {
     name = bb->getName();
   }
 
-  /* Destructor for the BasicBlock-based node type.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
   ~BasicBlockNode() { }
 
-  /* [getName] returns the name of the LLVM Value around which this node wraps.
-   *
-   * Override: Provides the name of the basic block itself.
+  /* Override: Provides the name of the basic block itself.
    */
   virtual std::string getName() override;
 
-  /* [getBasicBlock] returns a pointer to the basic block that contains this node
-   *   in the original LLVM IR, if such a notion makes sense.
-   *
-   * Override: Returns a pointer to the wrapped basic block itself.
+  /* Override: Returns a pointer to the wrapped basic block itself.
    */
   virtual const BasicBlock* getBasicBlock() override;
 

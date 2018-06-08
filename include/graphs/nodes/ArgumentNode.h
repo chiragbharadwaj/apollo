@@ -1,15 +1,12 @@
-#ifndef APOLLO_GRAPHS_ARGUMENTNODE
-#define APOLLO_GRAPHS_ARGUMENTNODE
+#ifndef APOLLO_GRAPHS_NODES_ARGUMENTNODE
+#define APOLLO_GRAPHS_NODES_ARGUMENTNODE
 
 // Pulling in various LLVM classes for prototype signatures.
 #include "llvm/IR/Argument.h"
 #include "llvm/Support/Casting.h"
 
 // Pull in the base node type.
-#include "graphs/Node.h"
-
-// Pulling in the node type discriminator for LLVM-style class hierarchies.
-#include "graphs/NodeInfo.h"
+#include "graphs/nodes/Node.h"
 
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
@@ -20,16 +17,11 @@ namespace apollo {
 // Wrapper around LLVM Argument types.
 class ArgumentNode : public Node {
 public:
-  /* Constructor for the Argument-based node type.
-   *     [bb]: The LLVM Argument around which to wrap this node.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
-  ArgumentNode(const Argument *arg) : Node(Kind_Argument, arg) { }
+  ArgumentNode(const Argument *arg) : Node(Node_Argument, arg) { }
 
-  /* Destructor for the Argument-based node type.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
   ~ArgumentNode() { }
 

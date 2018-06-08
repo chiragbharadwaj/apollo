@@ -1,15 +1,12 @@
-#ifndef APOLLO_GRAPHS_INSTRUCTIONNODE
-#define APOLLO_GRAPHS_INSTRUCTIONNODE
+#ifndef APOLLO_GRAPHS_NODES_INSTRUCTIONNODE
+#define APOLLO_GRAPHS_NODES_INSTRUCTIONNODE
 
 // Pulling in various LLVM classes for prototype signatures.
 #include "llvm/IR/Instruction.h"
 #include "llvm/Support/Casting.h"
 
 // Pull in the base node type.
-#include "graphs/Node.h"
-
-// Pulling in the node type discriminator for LLVM-style class hierarchies.
-#include "graphs/NodeInfo.h"
+#include "graphs/nodes/Node.h"
 
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
@@ -20,25 +17,17 @@ namespace apollo {
 // Wrapper around LLVM Instruction types.
 class InstructionNode : public Node {
 public:
-  /* Constructor for the Instruction-based node type.
-   *     [inst]: The LLVM Instruction around which to wrap this node.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
-  InstructionNode(const Instruction *inst) : Node(Kind_Instruction, inst) {
+  InstructionNode(const Instruction *inst) : Node(Node_Instruction, inst) {
     parent = inst->getParent();
   }
 
-  /* Destructor for the Instruction-based node type.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
   ~InstructionNode() { }
 
-  /* [getBasicBlock] returns a pointer to the basic block that contains this node
-   *   in the original LLVM IR, if such a notion makes sense.
-   *
-   * Override: Returns the actual saved parent pointer.
+  /* Override: Returns the actual saved parent pointer.
    */
   virtual const BasicBlock* getBasicBlock() override;
 

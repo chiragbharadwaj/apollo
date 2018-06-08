@@ -1,6 +1,5 @@
 // Pull in the function prototypes.
-#include "graphs/InstructionNode.h"
-#include "graphs/NodeInfo.h"
+#include "graphs/nodes/InstructionNode.h"
 
 // Shared namespace within the project.
 using namespace apollo;
@@ -12,5 +11,5 @@ const BasicBlock* InstructionNode::getBasicBlock() {
 
 // See header file.
 bool InstructionNode::classof(const Node *n) {
-  return (n->getKind() == Kind_Instruction);
+  return (n->getKind() == Node_Instruction);
 }

@@ -1,5 +1,5 @@
 // Pull in the function prototypes.
-#include "graphs/Node.h"
+#include "graphs/nodes/Node.h"
 
 // Shared namespace within the project.
 using namespace apollo;
@@ -31,6 +31,6 @@ const BasicBlock* Node::getBasicBlock() {
 
 // See header file.
 bool Node::classof(const Node *n) {
-  return (n->getKind() >= Kind_Base) &&
-         (n->getKind() <= Kind_Argument);
+  return (n->getKind() >= Node_Base) &&
+         (n->getKind() <= Node_Argument);
 }

@@ -1,15 +1,12 @@
-#ifndef APOLLO_GRAPHS_CONSTANTNODE
-#define APOLLO_GRAPHS_CONSTANTNODE
+#ifndef APOLLO_GRAPHS_NODES_CONSTANTNODE
+#define APOLLO_GRAPHS_NODES_CONSTANTNODE
 
 // Pulling in various LLVM classes for prototype signatures.
 #include "llvm/IR/Constant.h"
 #include "llvm/Support/Casting.h"
 
 // Pull in the base node type.
-#include "graphs/Node.h"
-
-// Pulling in the node type discriminator for LLVM-style class hierarchies.
-#include "graphs/NodeInfo.h"
+#include "graphs/nodes/Node.h"
 
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
@@ -20,16 +17,11 @@ namespace apollo {
 // Wrapper around LLVM Constant types.
 class ConstantNode : public Node {
 public:
-  /* Constructor for the Constant-based node type.
-   *     [bb]: The LLVM Constant around which to wrap this node.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
-  ConstantNode(const Constant *cnst) : Node(Kind_Constant, cnst) { }
+  ConstantNode(const Constant *cnst) : Node(Node_Constant, cnst) { }
 
-  /* Destructor for the Constant-based node type.
-   *
-   * Override: Maintain behavior of the base node class.
+  /* Override: Maintain behavior of the base node class.
    */
   ~ConstantNode() { }
 

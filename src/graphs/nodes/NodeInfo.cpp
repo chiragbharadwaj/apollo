@@ -1,5 +1,5 @@
 // Pull in the function prototypes.
-#include "graphs/NodeInfo.h"
+#include "graphs/nodes/NodeInfo.h"
 
 // Shared namespace within the project.
 using namespace apollo;
@@ -15,10 +15,10 @@ std::string NodeInfo::toString(NodeKind nk) {
 
 // See header file.
 std::map<NodeKind, std::string> NodeInfo::createStrMap() {
-  return { {Kind_Base,        "Node"},
-           {Kind_Instruction, "InstructionNode"},
-           {Kind_BasicBlock,  "BasicBlockNode"},
-           {Kind_Constant,    "ConstantNode"},
-           {Kind_Argument,    "ArgumentNode"}
+  return { {Node_Base,        "(value) node"},
+           {Node_Instruction, "instruction node"},
+           {Node_BasicBlock,  "basic-block node"},
+           {Node_Constant,    "constant node"},
+           {Node_Argument,    "argument node"}
          };
 }
