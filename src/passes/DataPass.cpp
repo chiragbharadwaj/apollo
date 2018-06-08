@@ -1,9 +1,6 @@
 // Pull in the function prototypes.
 #include "passes/DataPass.h"
 
-// Pull in all earlier passes that act as prerequisites for this pass.
-#include "passes/ControlPass.h"
-
 // Pull in various graph utilities to simplify accesses/augmentations.
 #include "graphs/edges/EdgeInfo.h"
 
@@ -32,7 +29,6 @@ StringRef DataPass::getPassName() const {
 
 // See header file.
 void DataPass::getAnalysisUsage(AnalysisUsage &au) const {
-  au.addRequired<ControlPass>();
   au.setPreservesAll();
 }
 
@@ -50,8 +46,6 @@ std::map<Value*,Node*> DataPass::getValueMap() {
 bool DataPass::runOnFunction(Function &func) {
   // We will only consider the labelled functions for now.
   if (PassUtils::isKernelFunction(func)) {
-    depGraph = getAnalysis<ControlPass>().getGraph();
-    valueMap = getAnalysis<ControlPass>().getValueMap();
     addDataEdges(func);
   }
   return false;
@@ -62,12 +56,15 @@ void DataPass::addDataEdges(Function &func) {
   // Loop over all of the instructions in the function via basic blocks
   for (auto &bb : func) {
     for (auto &inst : bb) {
-      auto node = PassUtils::createOrFind(&inst, valueMap, depGraph);
+      // Create a node for the instruction
+      auto node = PassUtils::createDynamicNode(&inst);
+      depGraph.addNode(node);
+      valueMap[&inst] = node;
 
-      // Ignore phi nodes in this case
+      // Ignore phi nodes for uses -- not a true data dependence
       if (!isa<PHINode>(&inst)) {
         for (Use &use : inst.operands()) {
-          // Ignore basic blocks, since we already handled earlier
+          // Ignore basic blocks, as we will handle them later
           Value *v = use.get();
           if (!isa<BasicBlock>(v)) {
             auto val = PassUtils::createOrFind(v, valueMap, depGraph);
