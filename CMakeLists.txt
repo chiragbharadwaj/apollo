@@ -7,10 +7,11 @@ if (APPLE)
   set(CMAKE_CXX_COMPILER "/usr/local/opt/llvm/bin/clang++")
 endif (APPLE)
 
-if (UNIX)
+if (UNIX AND NOT APPLE)
   set(CMAKE_C_COMPILER "/usr/bin/clang")
   set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-endif (UNIX)
+  set(CMAKE_EXE_LINKER_FLAGS "-fno-PIE" CACHE INTERNAL "" FORCE)
+endif (UNIX AND NOT APPLE)
 
 # Set the compiler to emit libraries and binaries to the appropriate directories.
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/lib)
