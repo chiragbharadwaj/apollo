@@ -36,6 +36,11 @@ DependencyGraph ControlPass::getGraph() {
 }
 
 // See header file.
+std::map<Value*,Node*> ControlPass::getValueMap() {
+  return valueMap;
+}
+
+// See header file.
 bool ControlPass::runOnFunction(Function &func) {
   // We will only consider the labelled functions for now.
   if (PassUtils::isKernelFunction(func)) {
@@ -46,29 +51,27 @@ bool ControlPass::runOnFunction(Function &func) {
 
 // See header file.
 void ControlPass::addControlEdges(Function &func) {
-  // Maintain a map between basic blocks and their corresponding nodes
-  std::map<BasicBlock*,Node*> bbMap;
-
   // Initially pass through and add all of the basic blocks
   for (auto &bb : func) {
     auto node = PassUtils::createDynamicNode(&bb);
     depGraph.addNode(node);
-    bbMap[&bb] = node;
+    valueMap[&bb] = node;
   }
 
   // Then add control edges as needed for terminator-to-successors
   for (auto &bb : func) {
     // Get the node corresponding to this basic block
-    auto bbSrc = bbMap.at(&bb);
+    auto bbSrc = valueMap.at(&bb);
 
     // Get the terminator instruction and add a node for it
     TerminatorInst* term = bb.getTerminator();
     auto src = PassUtils::createDynamicNode(term);
     depGraph.addNode(src);
+    valueMap[term] = src;
 
     // Loop through the successors and add edges
     for (int i = 0; i < term->getNumSuccessors(); i++) {
-      auto &dest = bbMap.at(term->getSuccessor(i));
+      auto &dest = valueMap.at(term->getSuccessor(i));
       depGraph.addEdge(src, dest, Edge_Control);
     }
 
@@ -77,6 +80,7 @@ void ControlPass::addControlEdges(Function &func) {
       // Get the phi instruction and add a node for it
       auto phiDest = PassUtils::createDynamicNode(&phiNode);
       depGraph.addNode(phiDest);
+      valueMap[&phiNode] = phiDest;
 
       // Add a control edge from the basic block to the phi node and others
       depGraph.addEdge(bbSrc, phiDest, Edge_Control);

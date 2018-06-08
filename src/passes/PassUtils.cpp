@@ -33,3 +33,17 @@ Node* PassUtils::createDynamicNode(Value *v) {
     assert(false);
   }
 }
+
+// See header file.
+Node* PassUtils::createOrFind(Value *v, std::map<Value*,Node*> valueMap, DependencyGraph depGraph) {
+  Node* node;
+  // Add a node for the instruction if one doesn't exist
+  if (valueMap.find(v) == valueMap.end()) {
+    node = createDynamicNode(v);
+    depGraph.addNode(node);
+    valueMap[v] = node;
+  } else {
+    node = valueMap.at(v);
+  }
+  return node;
+}

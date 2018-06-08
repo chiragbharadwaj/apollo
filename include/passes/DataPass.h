@@ -1,5 +1,5 @@
-#ifndef APOLLO_PASSES_CONTROLPASS
-#define APOLLO_PASSES_CONTROLPASS
+#ifndef APOLLO_PASSES_DATAPASS
+#define APOLLO_PASSES_DATAPASS
 
 // Pull in some standard data structures.
 #include <map>
@@ -7,15 +7,11 @@
 // Pulling in various LLVM classes for prototype signatures.
 #include "llvm/Pass.h"
 #include "llvm/PassAnalysisSupport.h"
-#include "llvm/ADT/StringRef.h"
 #include "llvm/IR/Function.h"
-#include "llvm/IR/Value.h"
+#include "llvm/ADT/StringRef.h"
 
 // Pull in the dependency graph class for static analysis.
 #include "graphs/DependencyGraph.h"
-
-// Pull in the base node type.
-#include "graphs/nodes/Node.h"
 
 // To avoid having to preface every LLVM class name.
 using namespace llvm;
@@ -24,7 +20,7 @@ using namespace llvm;
 namespace apollo {
 
 // Use a pass over functions in the LLVM IR to augment the dependency graph.
-class ControlPass : public FunctionPass {
+class DataPass : public FunctionPass {
 public:
   // Identifier for this pass, a replacement for typeid.
   static char ID;
@@ -32,7 +28,7 @@ public:
   /* Simple constructor that just invokes the parent constructor by default and
    *   initializes the internal state variables.
    */
-  ControlPass()
+  DataPass()
     : FunctionPass(ID) { }
 
   /* [runOnFunction] is called on every function [func] present in the original
@@ -76,11 +72,11 @@ private:
   // A mapping between LLVM Values and nodes, to avoid re-insertions.
   std::map<Value*,Node*> valueMap;
 
-  /* [addControlEdges] statically analyzes [func] and adds control-flow edges
+  /* [addControlEdges] statically analyzes [func] and adds data-dependence edges
    *   to the internal static program graph. Some phi-edges are also added here,
    *   since they can be involved with all types of dependencies.
    */
-  void addControlEdges(Function &func);
+  void addDataEdges(Function &func);
 };
 
 }

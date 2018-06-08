@@ -1,8 +1,14 @@
 #ifndef APOLLO_PASSES_PASSUTILS
 #define APOLLO_PASSES_PASSUTILS
 
+// Pull in some standard data structures.
+#include <map>
+
 // Include all of the node types for dynamic-type creation.
 #include "graphs/nodes/Nodes.h"
+
+// Pull in the dependency graph class for static analysis.
+#include "graphs/DependencyGraph.h"
 
 // Pulling in various LLVM classes for prototype signatures.
 #include "llvm/IR/Function.h"
@@ -36,6 +42,16 @@ public:
    * Non-overridable.
    */
   static Node* createDynamicNode(Value *v);
+
+  /* [createOrFind] either creates a node corresponding to [v], inserting it into
+   *   [valueMap] and [depGraph], or it retrieves it from [valueMap] if it has
+   *   already been inserted. In either case, a pointer to this node is returned.
+   *     [v]: An LLVM Value whose presence or absence in the graph is TBD.
+   *     [valueMap]: The mapping between LLVM Values and internal node types.
+   *     [depGraph]: The dependency graph in which to insert a node wrapping
+   *                 around [v] in the case that it is not in the graph already.
+   */
+  static Node* createOrFind(Value *v, std::map<Value*,Node*> valueMap, DependencyGraph depGraph);
 };
 
 }
