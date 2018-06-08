@@ -16,7 +16,7 @@ set_target_properties(
   nodes
   edges
   PROPERTIES
-    COMPILE_FLAGS "-std=c++14 -fno-rtti"
+    COMPILE_FLAGS "-std=c++14 -fno-rtti -fPIC"
     PREFIX        ""
 )
 

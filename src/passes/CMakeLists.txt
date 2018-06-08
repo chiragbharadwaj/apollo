@@ -10,7 +10,7 @@ add_library(passUtils STATIC ${UTIL_SOURCES} ${HEADERS})
 set_target_properties(
   passUtils
   PROPERTIES
-    COMPILE_FLAGS "-std=c++14 -fno-rtti"
+    COMPILE_FLAGS "-std=c++14 -fno-rtti -fPIC"
     PREFIX        ""
 )
 

@@ -10,7 +10,6 @@ endif (APPLE)
 if (UNIX AND NOT APPLE)
   set(CMAKE_C_COMPILER "/usr/bin/clang")
   set(CMAKE_CXX_COMPILER "/usr/bin/clang++")
-  set(CMAKE_EXE_LINKER_FLAGS "-fno-PIE" CACHE INTERNAL "" FORCE)
 endif (UNIX AND NOT APPLE)
 
 # Set the compiler to emit libraries and binaries to the appropriate directories.
