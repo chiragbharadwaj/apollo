@@ -6,10 +6,10 @@
 
 This project was built with the following tools:
 
- + GNU Make 3.81
- + `cmake` 3.11.1
+ + GNU Make 4.1
+ + `cmake` 3.11.4
  + `ninja` 1.8.2
- + `clang`/LLVM toolchain, 6.0.0+ (with C++14 support)
+ + `clang`/LLVM toolchain, 7.0.0+ (with C++14 support)
 
 No compatibility is guaranteed for other compilers/versions of these toolchains, mainly because LLVM is fairly backwards-incompatible. :-)
 
