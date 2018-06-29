@@ -8,7 +8,7 @@ using namespace apollo;
 int Node::id = 0;
 
 // See header file.
-int Node::getID() {
+int Node::getMonotonicID() {
   return id;
 }
 

@@ -119,14 +119,24 @@ namespace apollo {
      */
     void addLoopCarryEdges(Function &func);
 
-    /* [exportToFiles] creates a text file containing a representation of the
+    /* [exportToFile] creates a text file containing a representation of the
      *   internal static program graph created by the various dependency analyses.
-     *   Also generates a visualization file containing a DOT representation of
-     *   the graph that Graphviz can easily read. The text file is human readable.
+     *   The text file is human readable.
+     *     [func]: The function whose graph is to be exported.
      *
      * Non-overridable.
      */
-    void exportToFiles();
+    void exportToFile(Function &func);
+
+    /* [visualizeGraph] creates a text file containing a representation of the
+     *   internal static program graph created by the various dependency analyses.
+     *   The text file is in the DOT format that Graphviz can then use as input
+     *   for generation of a PNG image. The file is not human readable.
+     *     [func]: The function whose graph is to be visualized.
+     *
+     * Non-overridable.
+     */
+    void visualizeGraph(Function &func);
   };
 
 }

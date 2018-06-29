@@ -53,11 +53,12 @@ namespace apollo {
       id--;
     }
 
-    /* [getID] returns the internal ID corresponding to this node at creation-time.
+    /* [getMonotonicID] returns the internal ID corresponding to this node at
+     *   creation-time.
      *
      * Non-overridable.
      */
-    int getID();
+    int getMonotonicID();
 
     /* [getKind] returns the dynamic type of this node class in the class hierarchy.
      *

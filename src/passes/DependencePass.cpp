@@ -62,7 +62,8 @@ bool DependencePass::runOnFunction(Function &func) {
     addPhiEdges(func);
     addMemoryEdges(func);
     addLoopCarryEdges(func);
-    exportToFiles();
+    exportToFile(func);
+    visualizeGraph(func);
   }
   return false;
 }
@@ -240,107 +241,118 @@ void DependencePass::addLoopCarryEdges(Function &func) {
 }
 
 // See header file.
-void DependencePass::exportToFiles() {
+void DependencePass::exportToFile(Function &func) {
 
-  // This version is from the `master` branch. It needs to be modified to use
-  // the `clean` branch's structure. This will require a different approach and
-  // can be done with some simple refactoring, as the interface of DependencyGraph
-  // directly supports it.
+  std::ofstream cfile ("../data/exported-graph.txt");
+  if (cfile.is_open()) {
+    // Initial basic block
+    cfile << "0\n";
 
-  // TODO: Fix this!
+    // Number of basic blocks
+    std::vector<Instruction*> idToInst;  // InstID to Inst
+    std::map<Instruction*,int> instToID; // Inst   to BBID
+    int bbIdx = 0;
+    int instIdx = 0;
+    for (auto &bb : func) {
+      for (auto &inst : bb) {
+        idToInst.push_back(&inst);
+        instToID[&inst] = bbIdx;
+        instIdx++;
+      }
+      bbIdx++;
+    }
+    cfile << bbIdx << "\n";
 
-//  std::ofstream cfile ("../data/exported-graph.txt");
-//  if (cfile.is_open()) {
-//    // Initial basic block
-//    cfile << "0\n";
-//    // Number of basic blocks
-//    std::vector<BasicBlock*> bbids;
-//    std::vector<Instruction*> instids;
-//    std::map<Instruction*,int> instToBB;
-//    int bbIdx = 0;
-//    int instIdx = 0;
-//    for (auto &bb : f) {
-//      bbids.push_back(&bb);
-//      for (auto &inst : bb) {
-//        instids.push_back(&inst);
-//        instToBB[&inst] = bbIdx;
-//        instIdx++;
-//      }
-//      bbIdx++;
-//    }
-//    cfile << bbIdx << "\n";
-//    // Number of nodes
-//    int numNodes = nodes.size();
-//    cfile << numNodes << "\n";
-//    // Number of edges
-//    int numEdges = 0;
-//    std::map<Node*,int> nodeMap;
-//    int counter = 0;
-//    for (auto &node : nodes) {
-//      nodeMap[node] = counter;
-//      numEdges += node->c_adjs.size();
-//      numEdges += node->d_adjs.size();
-//      numEdges += node->m_adjs.size();
-//      numEdges += node->mm_adjs.size();
-//      numEdges += node->p_adjs.size();
-//      numEdges += node->lc_adjs.size();
-//      numEdges += node->lcm_adjs.size();
-//      counter++;
-//    }
-//    cfile << numEdges << "\n";
-//    for (int id = 0; id < numNodes; id++) {
-//      int instType = -1;
-//      Instruction* inst = instids[id];
-//      unsigned opcode = inst->getOpcode();
-//
-//      if (opcode == Instruction::Add) {
-//        instType = 1;
-//      } else if (opcode == Instruction::Sub) {
-//        instType = 2;
-//      } else if (opcode == Instruction::And || opcode == Instruction::Or || opcode == Instruction::Xor) {
-//        instType = 3;
-//      } else if (opcode == Instruction::Mul) {
-//        instType = 4;
-//      } else if (opcode == Instruction::SDiv || opcode == Instruction::UDiv) {
-//        instType = 5;
-//      } else if (isa<LoadInst>(inst)) {
-//        instType = 6;
-//      } else if (isa<StoreInst>(inst)) {
-//        instType = 7;
-//      } else if (isa<TerminatorInst>(inst)) {
-//        instType = 8;
-//      } else if (isa<PHINode>(inst)) {
-//        instType = 9;
-//      } else {
-//        instType = 0;
-//      }
-//
-//      cfile << id << "," << instType << "," << instToBB[inst] << "," << "placeholder" << "\n";
-//    }
-//    for (auto &src : nodes) {
-//      for (auto &dest : src->c_adjs) {
-//        cfile << nodeMap[src] << "," << nodeMap[dest] << "0" << "\n";
-//      }
-//      for (auto &dest : src->d_adjs) {
-//        cfile << nodeMap[src] << "," << nodeMap[dest] << "1" << "\n";
-//      }
-//      for (auto &dest : src->m_adjs) {
-//        cfile << nodeMap[src] << "," << nodeMap[dest] << "2" << "\n";
-//      }
-//      for (auto &dest : src->mm_adjs) {
-//        cfile << nodeMap[src] << "," << nodeMap[dest] << "3" << "\n";
-//      }
-//      for (auto &dest : src->p_adjs) {
-//        cfile << nodeMap[src] << "," << nodeMap[dest] << "4" << "\n";
-//      }
-//      for (auto &dest : src->lc_adjs) {
-//        cfile << nodeMap[src] << "," << nodeMap[dest] << "5" << "\n";
-//      }
-//      for (auto &dest : src->lcm_adjs) {
-//        cfile << nodeMap[src] << "," << nodeMap[dest] << "6" << "\n";
-//      }
-//    }
-//  } else {
-//    cfile << "Unable to open file\n";
-//  }
+    // Number of nodes
+    int numNodes = depGraph.size();
+    cfile << numNodes << "\n";
+
+    // Number of edges
+    int numEdges = 0;
+    cfile << numEdges << "\n";
+
+    // The actual nodes themselves
+    for (int id = 0; id < numNodes; id++) {
+      int instType;
+      auto *inst = idToInst[id];
+      unsigned opcode = inst->getOpcode();
+
+      if (opcode == Instruction::Add) {
+        instType = 1;
+      } else if (opcode == Instruction::Sub) {
+        instType = 2;
+      } else if (opcode == Instruction::And || opcode == Instruction::Or || opcode == Instruction::Xor) {
+        instType = 3;
+      } else if (opcode == Instruction::Mul) {
+        instType = 4;
+      } else if (opcode == Instruction::SDiv || opcode == Instruction::UDiv) {
+        instType = 5;
+      } else if (isa<LoadInst>(inst)) {
+        instType = 6;
+      } else if (isa<StoreInst>(inst)) {
+        instType = 7;
+      } else if (isa<TerminatorInst>(inst)) {
+        instType = 8;
+      } else if (isa<PHINode>(inst)) {
+        instType = 9;
+      } else {
+        instType = 0;
+      }
+
+      cfile << id << "," << instType << "," << instToID[inst] << "," << "placeholder" << "\n";
+    }
+
+    // The various different edges in the graph
+    for (auto &edge : depGraph.getControlEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << "," << dest->getMonotonicID() << "0" << "\n";
+      }
+    }
+    for (auto &edge : depGraph.getDataEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << "," << dest->getMonotonicID() << "1" << "\n";
+      }
+    }
+    for (auto &edge : depGraph.getMemoryEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << "," << dest->getMonotonicID() << "2" << "\n";
+      }
+    }
+    for (auto &edge : depGraph.getMemoryMaybeEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << "," << dest->getMonotonicID() << "3" << "\n";
+      }
+    }
+    for (auto &edge : depGraph.getPhiDataEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << "," << dest->getMonotonicID() << "4" << "\n";
+      }
+    }
+    for (auto &edge : depGraph.getLoopCarryEdges()) {
+      auto *src = edge.first;
+      for (auto &entry : edge.second) {
+        auto *dest = entry.first;
+        cfile << src->getMonotonicID() << "," << dest->getMonotonicID() << "5" << "\n";
+      }
+    }
+    for (auto &edge : depGraph.getLoopCarryMaybeEdges()) {
+      auto *src = edge.first;
+      for (auto &entry : edge.second) {
+        auto *dest = entry.first;
+        cfile << src->getMonotonicID() << "," << dest->getMonotonicID() << "6" << "\n";
+      }
+    }
+  } else {
+    cfile << "Unable to open file\n";
+  }
+}
+
+// See header file.
+void DependencePass::visualizeGraph(Function &func) {
+
 }
