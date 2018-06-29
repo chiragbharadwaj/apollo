@@ -105,7 +105,7 @@ void DependencePass::addControlEdges(Function &func) {
     auto src = PassUtils::createOrFind(term, valueMap, depGraph);
 
     // Loop through the successors and add edges
-    for (int i = 0; i < term->getNumSuccessors(); i++) {
+    for (unsigned i = 0; i < term->getNumSuccessors(); i++) {
       auto &dest = valueMap.at(term->getSuccessor(i));
       depGraph.addEdge(src, dest, Edge_Control);
     }
@@ -126,7 +126,7 @@ void DependencePass::addPhiEdges(Function &func) {
       depGraph.addEdge(bbSrc, phiDest, Edge_Control);
 
       // Add control edges for other incoming values into the phi node
-      for (int i = 0; i < phiNode.getNumIncomingValues(); i++) {
+      for (unsigned i = 0; i < phiNode.getNumIncomingValues(); i++) {
         auto phiSrc = PassUtils::createOrFind(phiNode.getIncomingValue(i), valueMap, depGraph);
         depGraph.addEdge(phiSrc, phiDest, Edge_PhiData);
       }
@@ -355,4 +355,126 @@ void DependencePass::exportToFile(Function &func) {
 // See header file.
 void DependencePass::visualizeGraph(Function &func) {
 
+  std::ofstream cfile ("../data/exported-graph.dot");
+  if (cfile.is_open()) {
+    cfile << "digraph G {\n";
+    cfile << "node [nodesep=0.75, ranksep=0.75];\n";
+    cfile << "edge [weight=1.2];\n";
+
+    // Identify all of the clusters
+    std::vector<Node*> clusters;
+    for (auto &entry : depGraph) {
+      auto *node = entry.first;
+      if (isa<BasicBlockNode>(node)) {
+        clusters.push_back(node);
+      }
+    }
+
+    // Draw various nodes in different colors
+    int idx = 0;
+    for (auto &cluster : clusters) {
+      cfile << "subgraph cluster_" << std::to_string(idx) << " {\n";
+      cfile << "color=black;\n";
+      for (auto &entry : depGraph) {
+        auto *node = entry.first;
+        if (cluster->getBasicBlock() == node->getBasicBlock()) {
+          std::string extra = ",shape=rectangle";
+          if (isa<InstructionNode>(node)) {
+            const auto *inst = static_cast<const Instruction*>(node->getValue());
+            if (isa<LoadInst>(inst))
+              extra += ",fontcolor=red,pencolor=red";
+            else if (isa<StoreInst>(inst))
+              extra += ",fontcolor=red,pencolor=red";
+            else if (isa<TerminatorInst>(inst))
+              extra += ",fontcolor=blue,pencolor=blue";
+          } else if (isa<BasicBlockNode>(node)) {
+            extra += ",fontcolor=blue,pencolor=blue";
+          }
+          cfile << node->getMonotonicID() << "[label=\"" << node->getName() <<"\",fontsize=10"<< extra << "];\n";
+        }
+      }
+      cfile << "}\n";
+      idx++;
+    }
+
+    // Draw various edges in different colors
+    for (auto &edge : depGraph.getControlEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        bool isBackEdge = (src->getBasicBlock() == dest->getValue());
+        if (isBackEdge)
+          cfile << dest->getMonotonicID() << " -> " << src->getMonotonicID() << "[color=blue,dir=back];\n";
+        else
+          cfile << src->getMonotonicID() << " -> " << dest->getMonotonicID() << "[color=blue];\n";
+      }
+    }
+    for (auto &edge : depGraph.getDataEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << " -> " << dest->getMonotonicID() << "[color=black];\n";
+      }
+    }
+    for (auto &edge : depGraph.getMemoryEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << " -> " << dest->getMonotonicID() << "[color=red];\n";
+      }
+    }
+    for (auto &edge : depGraph.getMemoryMaybeEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        cfile << src->getMonotonicID() << " -> " << dest->getMonotonicID() << "[color=red,style=dotted];\n";
+      }
+    }
+    for (auto &edge : depGraph.getPhiDataEdges()) {
+      auto *src = edge.first;
+      for (auto &dest : edge.second) {
+        bool isPhiEdge = (src->getBasicBlock() == dest->getBasicBlock());
+        if (isPhiEdge)
+          cfile << dest->getMonotonicID() << " -> " << src->getMonotonicID() << "[color=navyblue,dir=back];\n";
+        else
+          cfile << src->getMonotonicID() << " -> " << dest->getMonotonicID() << "[color=navyblue];\n";
+      }
+    }
+    for (auto &edge : depGraph.getLoopCarryEdges()) {
+      auto *src = edge.first;
+      for (auto &entry : edge.second) {
+        auto *dest = entry.first;
+        auto  dist = entry.second;
+
+        std::string extra;
+        if (dist != -1)
+          extra = std::to_string(dist);
+
+        cfile << src->getMonotonicID() << " -> " << dest->getMonotonicID() << "[label=\"" << extra <<"\",color=orange];\n";
+      }
+    }
+    for (auto &edge : depGraph.getLoopCarryMaybeEdges()) {
+      auto *src = edge.first;
+      for (auto &entry : edge.second) {
+        auto *dest = entry.first;
+        auto  dist = entry.second;
+
+        std::string extra;
+        if (dist != -1)
+          extra = std::to_string(dist);
+
+        cfile << src->getMonotonicID() << " -> " << dest->getMonotonicID() << "[label=\"" << extra <<"\",color=orange,style=dotted];\n";
+      }
+    }
+
+    // Draw the key/legend for the node/edge types
+    cfile << "subgraph cluster_help {\ncolor=black;\n";
+    cfile << "t1[label=\"Red Ellipse = LD/ST\",fontsize=10,shape=ellipse,fontcolor=red,pencolor=red];\n";
+    cfile << "t2[label=\"Blue Rectangle = BasicBlock\",fontsize=10,shape=rectangle,fontcolor=blue,pencolor=blue];\n";
+    cfile << "t3[label=\"Blue Ellipse = Terminator Instruction\",fontsize=10,shape=ellipse,fontcolor=blue,pencolor=blue];\n";
+    cfile << "t4[label=\"Black Edge = Data Dependence\n Red Edge = Memory Dependence (Dotted=Maybe) \n Orange Edge = Loop-carried Memory Dependence (Dotted=Maybe) \n Blue Edge = Control\n Navy Edge = Phi Data Dependence \",fontsize=10,shape=rectangle,fontcolor=black];\n";
+    cfile << "t1->t2 [style=invis];\n";
+    cfile << "t2->t3 [style=invis];\n";
+    cfile << "t3->t4 [style=invis];\n";
+    cfile << "}\n";
+    cfile << "}\n";
+  } else {
+    cfile << "Unable to open file\n";
+  }
 }
